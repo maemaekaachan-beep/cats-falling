@@ -1,6 +1,6 @@
 {
   "name": "猫と犬が降ってくる",
-  "short_name": "猫犬雨",
+  "short_name": "猫と犬が降ってくる",
   "description": "猫と犬(や好きなもの)がひたすら空から降ってくるだけの、実用性ゼロのページ",
   "start_url": "./",
   "display": "standalone",
