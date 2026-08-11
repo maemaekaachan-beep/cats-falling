@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>猫と犬が降ってくる</title>
+<meta name="description" content="猫と犬(や好きなもの)がひたすら空から降ってくるだけの、実用性ゼロのページ">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#87CEEB">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    height:100vh;
+    overflow:hidden;
+    background:linear-gradient(180deg,#87CEEB 0%,#b8e0f0 40%,#dff3ff 100%);
+    font-family:'Noto Sans JP', sans-serif;
+    position:relative;
+    cursor:pointer;
+    user-select:none;
+  }
+  .cloud{
+    position:absolute;
+    font-size:48px;
+    opacity:.85;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.05));
+  }
+  .cat{
+    position:absolute;
+    top:-80px;
+    will-change:transform;
+    pointer-events:none;
+  }
+  .hud{
+    position:fixed;
+    top:16px;left:50%;
+    transform:translateX(-50%);
+    background:rgba(255,255,255,.75);
+    backdrop-filter:blur(4px);
+    padding:10px 20px;
+    border-radius:999px;
+    font-size:14px;
+    color:#444;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    z-index:10;
+    text-align:center;
+    line-height:1.5;
+  }
+  .hud b{font-size:20px;color:#e0703f;}
+  .hint{
+    position:fixed;
+    bottom:20px;left:50%;
+    transform:translateX(-50%);
+    color:#5a5a5a;
+    font-size:12px;
+    opacity:.7;
+    z-index:10;
+  }
+  .controls{
+    position:fixed;
+    top:80px;left:50%;
+    transform:translateX(-50%);
+    z-index:10;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    max-width:90vw;
+  }
+  .controls input{
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid #ccc;
+    font-size:14px;
+    width:280px;
+    max-width:60vw;
+    background:rgba(255,255,255,.9);
+  }
+  .controls button{
+    padding:8px 16px;
+    border-radius:999px;
+    border:none;
+    background:#e0703f;
+    color:#fff;
+    font-size:13px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .controls button#resetBtn{
+    background:#888;
+  }
+</style>
+</head>
+<body>
+
+<div class="hud">これまでに降ってきた数：<b id="count">0</b>個<br>クリックで土砂降りにできます</div>
+
+<div class="controls">
+  <input type="text" id="customInput" placeholder="降らせたいものを「|」区切りで入力 例: 明日は台風が来る可能性大|今日は花火大会">
+  <button id="applyBtn">これを降らせる</button>
+  <button id="resetBtn">🐱🐶に戻す</button>
+</div>
+
+<div class="hint">画面のどこでもタップ／クリック</div>
+
+<script>
+const DEFAULT_CATS = ['🐱','🐈','🐈‍⬛','😺','😸','😹','🐶','🐕','🐕‍🦺','🐩','🦮'];
+let CATS = [...DEFAULT_CATS];
+let total = 0;
+const countEl = document.getElementById('count');
+
+function spawnCat(burst){
+  const cat = document.createElement('div');
+  cat.className = 'cat';
+  cat.textContent = CATS[Math.floor(Math.random()*CATS.length)];
+
+  const size = 24 + Math.random()*40;
+  const startX = Math.random()*100;
+  const duration = 3 + Math.random()*3.5;
+  const rotateStart = (Math.random()*60)-30;
+  const rotateEnd = rotateStart + (Math.random()*360-180);
+  const drift = (Math.random()*160)-80;
+  const delay = burst ? Math.random()*0.4 : 0;
+
+  cat.style.left = startX + 'vw';
+  cat.style.fontSize = size + 'px';
+  cat.style.transition = `transform ${duration}s linear ${delay}s, top ${duration}s linear ${delay}s`;
+  cat.style.transform = `rotate(${rotateStart}deg)`;
+
+  document.body.appendChild(cat);
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      cat.style.top = '110vh';
+      cat.style.transform = `translateX(${drift}px) rotate(${rotateEnd}deg)`;
+    });
+  });
+
+  total++;
+  countEl.textContent = total;
+
+  setTimeout(()=>{ cat.remove(); }, (duration+delay)*1000 + 200);
+}
+
+// 通常の雨(一定間隔で降り続ける)
+setInterval(()=>spawnCat(false), 450);
+
+// 最初から数匹降らせておく
+for(let i=0;i<5;i++){
+  setTimeout(()=>spawnCat(false), i*200);
+}
+
+// クリック/タップで土砂降り
+document.body.addEventListener('click', (e)=>{
+  if(e.target.closest('.controls')) return; // 入力欄・ボタン操作時は土砂降りにしない
+  for(let i=0;i<25;i++){
+    setTimeout(()=>spawnCat(true), i*15);
+  }
+});
+
+// カスタム入力の適用
+document.getElementById('applyBtn').addEventListener('click', ()=>{
+  const val = document.getElementById('customInput').value.trim();
+  if(!val) return;
+  const items = val.split(/[|｜]/).map(s=>s.trim()).filter(Boolean);
+  if(items.length > 0){
+    CATS = items;
+    for(let i=0;i<15;i++){
+      setTimeout(()=>spawnCat(true), i*20);
+    }
+  }
+});
+
+document.getElementById('customInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){
+    document.getElementById('applyBtn').click();
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  CATS = [...DEFAULT_CATS];
+  document.getElementById('customInput').value = '';
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+// 背景の雲(飾り、降ってはこない)
+const cloudEmojis = ['☁️','☁️','⛅'];
+for(let i=0;i<4;i++){
+  const c = document.createElement('div');
+  c.className = 'cloud';
+  c.textContent = cloudEmojis[Math.floor(Math.random()*cloudEmojis.length)];
+  c.style.left = (Math.random()*90)+'vw';
+  c.style.top = (Math.random()*30+5)+'vh';
+  c.style.fontSize = (30+Math.random()*30)+'px';
+  document.body.appendChild(c);
+}
+</script>
+</body>
+</html>
