@@ -136,21 +136,22 @@ function spawnCat(burst){
 
   cat.style.left = startX + 'vw';
   cat.style.fontSize = size + 'px';
-  cat.style.transition = `transform ${duration}s linear ${delay}s, top ${duration}s linear ${delay}s`;
-  cat.style.transform = `rotate(${rotateStart}deg)`;
+  cat.style.transition = `transform ${duration}s linear ${delay}s`;
+  cat.style.transform = `translate(0px, 0px) rotate(${rotateStart}deg)`;
 
   document.body.appendChild(cat);
 
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
-      cat.style.top = '110vh';
-      cat.style.transform = `translateX(${drift}px) rotate(${rotateEnd}deg)`;
+      cat.style.transform = `translate(${drift}px, calc(100vh + 160px)) rotate(${rotateEnd}deg)`;
     });
   });
 
   total++;
   countEl.textContent = total;
 
+  setTimeout(()=>{ cat.remove(); }, (duration+delay)*1000 + 200);
+}
   setTimeout(()=>{ cat.remove(); }, (duration+delay)*1000 + 200);
 }
 
