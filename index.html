@@ -32,17 +32,22 @@
     will-change:transform;
     pointer-events:none;
   }
-  .hud{
+  .hud-wrap{
   position:fixed;
-  top:16px;left:50%;
-  transform:translateX(-50%);
+  top:16px;left:0;right:0;
+  display:flex;
+  justify-content:center;
+  pointer-events:none;
+  z-index:10;
+}
+.hud{
+  pointer-events:auto;
   background:rgba(255,255,255,.75);
   padding:10px 24px;
   border-radius:999px;
   font-size:14px;
   color:#444;
   box-shadow:0 2px 10px rgba(0,0,0,.08);
-  z-index:10;
   text-align:left;
   line-height:1.5;
   width:280px;
@@ -105,7 +110,7 @@
 </head>
 <body>
 
-<div class="hud">これまでに降ってきた数：<b id="count">0</b>個<br>クリックで土砂降りにできます</div>
+<div class="hud-wrap"><div class="hud">これまでに降ってきた数：<b id="count">0</b>個<br>クリックで土砂降りにできます</div></div>
 
 <div class="controls">
   <input type="text" id="customInput" placeholder="降らせたいものを「|」区切りで入力 例: 明日は台風が来る可能性大|今日は花火大会">
