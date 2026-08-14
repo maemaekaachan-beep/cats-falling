@@ -72,8 +72,7 @@
   }
   .controls{
     position:fixed;
-    top:80px;left:50%;
-    transform:translateX(-50%);
+    top:80px;
     z-index:10;
     display:flex;
     gap:8px;
@@ -213,18 +212,25 @@ for(let i=0;i<4;i++){
   c.style.fontSize = (30+Math.random()*30)+'px';
   document.body.appendChild(c);
 }
- function pinHud(){
+function pinHud(){
   const wrap = document.querySelector('.hud-wrap');
   const hud = document.querySelector('.hud');
   const hudWidth = hud.getBoundingClientRect().width;
   const leftPx = Math.round((window.innerWidth - hudWidth) / 2);
   wrap.style.left = leftPx + 'px';
 }
+function pinControls(){
+  const controls = document.querySelector('.controls');
+  const w = controls.getBoundingClientRect().width;
+  const leftPx = Math.round((window.innerWidth - w) / 2);
+  controls.style.left = leftPx + 'px';
+}
 pinHud();
+pinControls();
 let resizeTimer;
 window.addEventListener('resize', ()=>{
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(pinHud, 300);
+  resizeTimer = setTimeout(()=>{ pinHud(); pinControls(); }, 300);
 });
 </script>
 </body>
